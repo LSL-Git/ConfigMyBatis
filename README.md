@@ -12,10 +12,7 @@
 
 
 
-@Author 瞌睡虫 
-
-@mybatis-3.2.2 
-
-@Database: mysql 5.7.15 
-
+@Author 瞌睡虫   
+@mybatis-3.2.2   
+@Database: mysql 5.7.15   
 @Tool: MyEclipse
