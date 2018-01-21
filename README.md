@@ -1,6 +1,6 @@
 # ConfigMyBatis
 
-**SSM 框架学习**
+**SSM 框架学习 (MyBatis篇)**
 
 一、MyBatis 的基本配置
 
