@@ -11,9 +11,9 @@
 *POJO (Plain Old Java Object) 简单的Java对象 实体类*	   
    
     
-1、导入必要架包
-|-mybatis-3.2.2.jar
-|-mysql-connector-java-5.1.0-bin.jar
+1、导入必要架包   
+|-mybatis-3.2.2.jar   
+|-mysql-connector-java-5.1.0-bin.jar   
    
 2、创建资源文件夹resources并创建 数据库属性文件(database.properties 非必需) mybatis配置文件(mybatis-config.xml 必须，名字不限) 其内容：
 *database.properties*
@@ -84,8 +84,109 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	</mappers>
 </configuration>
 ```
+MybatisUtil.java(数据库工具类，方便调用)
+```
+package com.lsl.ssm.utils;
 
+import java.io.InputStream;
 
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+public class MyBatisUtil {
+
+	private static SqlSessionFactory factory;
+	
+	static { // 在静态代码块下,factory只会被创建一次
+		System.out.println("static factory==============");
+		try {
+			InputStream is = Resources.getResourceAsStream("mybatis-config.xml");
+			factory = new SqlSessionFactoryBuilder().build(is);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 打开SqlSession
+	 * @return
+	 */
+	public static SqlSession createSqlSession() {
+		return factory.openSession(false); // true 为自动提交事务 默认为true
+	}
+	
+	/**
+	 * 关闭SqlSession
+	 * @param sqlsession
+	 */
+	public static void closeSqlSession(SqlSession sqlsession) {
+		if (null != sqlsession) {
+			sqlsession.close();
+		}
+	}
+}
+```
+Provider.java(实体类)
+```
+package com.lsl.ssm.pojo;
+
+import java.util.Date;
+// POJO(Plain Old Java Object)简单的Java对象|实体类
+public class Provider {
+	private Integer id; // id
+	private String proCode; // 供应商编码
+	private String proName; // 供应商名称
+	//...
+	//get{} set{} 省略...
+}
+```
+ProviderMapper.java
+```
+package com.lsl.ssm.dao;
+
+import java.util.List;
+
+import com.lsl.ssm.pojo.Provider;
+
+public interface ProviderMapper {
+	/**
+	 * 查询提供商表记录数
+	 * @return
+	 */
+	public int count();
+	/**
+	 * 查询提供商列表
+	 * @return
+	 */
+	public List<Provider> getProviderList();
+}
+```
+ProviderMapper.xml
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<!-- DAO(Data Access Object)数据访问对象 -->
+
+<mapper namespace="com.lsl.ssm.dao.ProviderMapper">
+	<!-- 查询供应商表记录数 -->
+	<select id="count" resultType="int">
+		select count(1) as count from
+		smbms_provider
+	</select>
+	
+	<!-- 查询供应商列表 -->
+	<select id="getProviderList" resultType="mProvider">
+		select * from smbms_provider
+	</select>
+	
+</mapper>
+```
 
 @Author 瞌睡虫   
 @mybatis-3.2.2   
